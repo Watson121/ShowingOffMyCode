@@ -65,8 +65,8 @@ ABoxType3::ABoxType3()
 // Called when the game starts or when spawned
 void ABoxType3::BeginPlay()
 {
+	CreateBox();
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -74,20 +74,22 @@ void ABoxType3::Tick(float DeltaTime)
 {
 	highlightMeshComponent->SetVisibility(highlightActive);			//This activates if the highlight is active or not, depending if the player hand is near or not.
 
-	if (GetPickedUp() == false) {
-		this->SetActorEnableCollision(true);
-	}
-	else if (GetPickedUp() == true) {
-		this->SetActorEnableCollision(false);
-	}
+	switch (pickedUp) {
+	case true:
+		/*So if the player has picked up this box, it means that it should be overlaping with the rest of the world, and not have any collision enable
+		If collision has not be enable because I do want it to be able to interact with other objects in the environemnt while in this state*/
 
-	if (GetPickedUp() == true) {
 		boxMeshComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECollisionResponse::ECR_Overlap);
 		boxMeshComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
-	}
-	else if (GetPickedUp() == false) {
+		this->SetActorEnableCollision(false);
+		break;
+	case false:
+		/*So if the played has not picked up the box/dropped the box. The box should be able to interact with the world and make collsions with it.*/
+
 		boxMeshComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECollisionResponse::ECR_Block);
 		boxMeshComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECollisionResponse::ECR_Block);
+		this->SetActorEnableCollision(true);
+		break;
 	}
 
 	itemCheck->OnComponentEndOverlap.AddDynamic(this, &ABoxType3::OnOverlapEnd);

@@ -4,11 +4,37 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Containers\EnumAsByte.h"
 #include "StrikeSystemInstance.generated.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
+enum EDifficulties {
+	DIFFICULTY_easy,
+	DIFFICULTY_medium,
+	DIFFICULTY_hard
+};
+
+UENUM(BlueprintType)
+enum ELevel {
+	LEVEL_MainMenu,
+	LEVEL_TimeTrial,
+	LEVEL_FinalPointsRoom,
+};
+
+UENUM(BlueprintType)
+enum EGameMode {
+	GAMEMODE_Story,
+	GAMEMODE_TimeTrial
+};
+
+UENUM(BlueprintType)
+enum EDay {
+	DAY_One,
+	DAY_Two,
+	DAY_Three
+};
+
+
 UCLASS()
 class THANKYOUFORSERVICE_API UStrikeSystemInstance : public UGameInstance
 {
@@ -17,6 +43,15 @@ class THANKYOUFORSERVICE_API UStrikeSystemInstance : public UGameInstance
 public:
 
 	UStrikeSystemInstance(const FObjectInitializer& ObjectInitializer);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EDifficulties> difficultLevel;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<ELevel> currentLevel;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EGameMode> currentGameMode;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EDay> storyDay;
 
 #pragma region Final Report System
 	int numberOfPackagesSorted;

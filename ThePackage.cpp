@@ -7,6 +7,9 @@
 #include "FinalReportSystem.h"
 #include "BoxTypeAndSize.h"
 #include "QuotaBoard.h"
+#include "BoxType1.h"
+#include "BoxType2.h"
+#include "BoxType3.h"
 
 // Sets default values
 AThePackage::AThePackage()
@@ -68,8 +71,7 @@ void AThePackage::BeginPlay()
 	destinationCities.SetNum(6);
 	chuteColours.SetNum(3);
 	boxTypes.SetNum(3);
-	boxSizes.SetNum(3);
-	objectNames.SetNum(3);
+
 
 	//Fills the desination cities array
 	destinationCities[0] = "London";
@@ -89,15 +91,8 @@ void AThePackage::BeginPlay()
 	boxTypes[1] = "Type 2";
 	boxTypes[2] = "Type 3";
 
-	//Fills the box size array
-	boxSizes[0] = "Size 1";
-	boxSizes[1] = "Size 2";
-	boxSizes[2] = "Size 3";
 
-	//Fills the object names Array
-	objectNames[0] = "Vase";
-	objectNames[1] = "Console";
-	objectNames[2] = "Toy";
+
 
 #pragma endregion
 
@@ -117,27 +112,10 @@ void AThePackage::BeginPlay()
 		quotaBoard = *ActorItr;
 	}
 
-	////Find the final report system in the current level
-	//for (TActorIterator<AFinalReportSystem> ActorItr(GetWorld()); ActorItr; ++ActorItr) {
-	//	finalReportSystem = *ActorItr;
-	//}
-
-	if (requirementsBoard) {
-		GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Yellow, TEXT("Requirement Board Found"));
-	}
-
-	if (strikeSystem) {
-		GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Yellow, TEXT("Strike System Found"));
-	}
-
-	if (quotaBoard) {
-		GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Yellow, TEXT("Quota Board Found"));
-	}
-
 #pragma endregion
 
 	SetRequirements();
-	SetPackageMesh();
+	//SetPackageMesh();
 	
 	packageMeshComponenet->BodyInstance.SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	packageMeshComponenet->BodyInstance.SetObjectType(ECollisionChannel::ECC_GameTraceChannel3);
@@ -146,7 +124,7 @@ void AThePackage::BeginPlay()
 	packageMeshComponenet->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
 	packageMeshComponenet->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Block);
 	packageMeshComponenet->SetCollisionResponseToChannel(ECC_WorldStatic, ECollisionResponse::ECR_Block);
-	packageMeshComponenet->SetCollisionResponseToChannel(ECC_WorldDynamic, ECollisionResponse::ECR_Block);
+	//packageMeshComponenet->SetCollisionResponseToChannel(ECC_WorldDynamic, ECollisionResponse::ECR_Block);
 	packageMeshComponenet->SetCollisionResponseToChannel(ECC_Pawn, ECollisionResponse::ECR_Block);
 	packageMeshComponenet->SetCollisionResponseToChannel(ECC_PhysicsBody, ECollisionResponse::ECR_Block);
 	packageMeshComponenet->SetCollisionResponseToChannel(ECC_Vehicle, ECollisionResponse::ECR_Block);
@@ -166,13 +144,6 @@ void AThePackage::BeginPlay()
 // Called every frame
 void AThePackage::Tick(float DeltaTime)
 {
-	if (DamageCheck() == true) {
-		//Send Strike to strike system
-	}
-	else {
-		//Do nothing
-	}
-
 	if (pickedUp == true) {
 		CallRequirementsBoard();
 	}
@@ -192,6 +163,11 @@ void AThePackage::OnCompHit(UPrimitiveComponent* MyComp, AActor* OtherActor, UPr
 		distance = FVector::Distance(stopPoint, dropPoint);
 		whileMoving = false;
 	}
+}
+
+void AThePackage::TurningOffThePhysics()
+{
+	packageMeshComponenet->SetSimulatePhysics(false);
 }
 
 void AThePackage::SetRequirements()
@@ -220,38 +196,63 @@ void AThePackage::SetRequirements()
 	}
 #pragma endregion
 
-#pragma region Setting the box type requirement
-	randomNumber = FMath::RandRange(0, boxTypes.Num() - 1);
-
-	if (randomNumber <= boxTypes.Num() - 1) {
-		boxTypeRequirement = boxTypes[randomNumber];
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Out of bounds"));
-	}
-#pragma endregion
-
 #pragma region Setting the object name
-	randomNumber = FMath::RandRange(0, objectNames.Num() - 1);
 
-	if (randomNumber <= objectNames.Num() - 1) {
-		objectName = objectNames[randomNumber];
+	/*This sets the name of the object*/
+
+	
+	randomNumber = FMath::RandRange(0, 2);
+
+	switch (randomNumber)
+	{
+	case EPackageTypes::PACKAGE_Toy:
+		boxTypeRequirement = "Type 1";
+
+		if (toyMesh)
+			packageMeshComponenet->SetStaticMesh(toyMesh);
+		
+		if (toyHighlightMesh)
+			highlightMeshComponenet->SetStaticMesh(toyHighlightMesh);
+		break;
+	case EPackageTypes::PACKAGE_Console:
+		boxTypeRequirement = "Type 2";
+
+		if (consoleMesh)
+			packageMeshComponenet->SetStaticMesh(consoleMesh);
+		
+		if (consoleHighlightMesh)
+			highlightMeshComponenet->SetStaticMesh(consoleHighlightMesh);
+		break;
+	case EPackageTypes::PACKAGE_Vase:
+		boxTypeRequirement = "Type 3";
+
+		if (vaseMesh)
+			packageMeshComponenet->SetStaticMesh(vaseMesh);
+		
+		if (vaseHighlighMesh)
+			highlightMeshComponenet->SetStaticMesh(vaseHighlighMesh);
+		break;
 	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Out of bounds"));
-	}
+	
 #pragma endregion
 
-#pragma region Setting the Box Size Requirement
-	randomNumber = FMath::RandRange(0, boxSizes.Num() - 1);
 
-	if (randomNumber <= boxSizes.Num() - 1) {
-		boxSizeRequirement = boxSizes[randomNumber];
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Out of bounds"));
-	}
+#pragma region Setting the box type requirement
+
+	/*Depending on what the object is, this package will be assigned a certain type*/
+
+
+	//randomNumber = FMath::RandRange(0, boxTypes.Num() - 1);
+
+	//if (randomNumber <= boxTypes.Num() - 1) {
+	//	boxTypeRequirement = boxTypes[randomNumber];
+	//}
+	//else {
+	//	UE_LOG(LogTemp, Warning, TEXT("Out of bounds"));
+	//}
 #pragma endregion
+
+
 
 	UE_LOG(LogTemp, Warning, TEXT("All Requirements Set"));
 }
@@ -295,7 +296,6 @@ void AThePackage::CallRequirementsBoard()
 	requirementsBoard->SetDestinationCity(GetDestinationCityRequirement());
 	requirementsBoard->SetChuteColour(GetChuteColourRequirement());
 	requirementsBoard->SetBoxType(GetBoxTypeRequirement());
-	requirementsBoard->SetBoxSize(GetBoxSizeRequirement());
 
 	UE_LOG(LogTemp, Warning, TEXT("Requirements Sent to board"));
 }
@@ -327,31 +327,20 @@ void AThePackage::RequirementCheck()
 		numberOfRequirementsCorrect++;
 	}
 
-	//Derermines if the box size is correct or not
-	if (boxSize == boxSizeRequirement) {
-		numberOfRequirementsCorrect++;
-	}
-
 	//Determines if the package has been badly damaged or not
-	if (damaged == false) {
-		numberOfRequirementsCorrect++;
-	}
+	//if (damaged == false) {
+	//	numberOfRequirementsCorrect++;
+	//}
 
 	//If the player does not meet five of the requirements, then they will get a strike
-	if (numberOfRequirementsCorrect < 5) {
+	if (numberOfRequirementsCorrect < 3) {
 		strikeSystem->SetNumberOfStrikes();			//A Strike is sent to the strike system
 		quotaBoard->SetNumberOfPackagesSorted();	//Sends a message saying a package has been sorted, but not correctly
 	}
-	else if (numberOfRequirementsCorrect == 5) {
+	else if (numberOfRequirementsCorrect == 3) {
 		quotaBoard->SetNumberOfPackagesSorted();				//Sends a message saying that a package has been sorted
 		quotaBoard->SetNumberOfPackagesSortedSuccessfully();	//Sends a message saying that a package has been sorted correctly
 	}
-
-	//GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Yellow, destinationCity);
-	//GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Yellow, chuteColour);
-	//GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Yellow, boxType);
-	//GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Yellow, FString::FromInt(boxSize));
-
 }
 
 bool AThePackage::DamageCheck()
@@ -401,18 +390,23 @@ void AThePackage::SetBoxType(FString type)
 	UE_LOG(LogTemp, Warning, TEXT("Box Type Set"));
 }
 
-void AThePackage::SetBoxSize(FString size)
-{
-	boxSize = size;
-	UE_LOG(LogTemp, Warning, TEXT("Box Size Set"));
-}
 void AThePackage::SetSimulatePhysics(bool simulate)
 {
 	packageMeshComponenet->SetSimulatePhysics(simulate);
 }
 
-void AThePackage::SetBox(ABoxTypeAndSize* b) {
-	box = b;
+void AThePackage::SetBox(ABoxType1* b) {
+	boxType1 = b;
+}
+
+void AThePackage::SetBoxType2(ABoxType2 * b)
+{
+	boxType2 = b;
+}
+
+void AThePackage::SetBoxType3(ABoxType3 * b)
+{
+	boxType3 = b;
 }
 
 void AThePackage::SetWhileMoving(bool moving)
@@ -472,10 +466,7 @@ FString AThePackage::GetBoxType()
 	return boxType;
 }
 
-FString AThePackage::GetBoxSize()
-{
-	return boxSize;
-}
+//The Requirements
 FString AThePackage::GetDestinationCityRequirement()
 {
 	return destinationRequirement;
@@ -488,14 +479,20 @@ FString AThePackage::GetBoxTypeRequirement()
 {
 	return boxTypeRequirement;
 }
-FString AThePackage::GetBoxSizeRequirement()
+
+ABoxType1 * AThePackage::GetBoxType1()
 {
-	return boxSizeRequirement;
+	return boxType1;
 }
 
-ABoxTypeAndSize * AThePackage::GetBox()
+ABoxType2 * AThePackage::GetBoxType2() 
 {
-	return box;
+	return boxType2;
+}
+
+ABoxType3 * AThePackage::GetBoxType3()
+{
+	return boxType3;
 }
 
 bool AThePackage::GetHighlightActive() {

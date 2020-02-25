@@ -15,6 +15,21 @@ class AStrikeSystem;
 class AFinalReportSystem;
 class ABoxTypeAndSize; 
 class AQuotaBoard;
+class ABoxType1;
+class ABoxType2;
+class ABoxType3;
+
+enum EPackageTypes {
+	PACKAGE_Toy,
+	PACKAGE_Console,
+	PACKAGE_Vase
+};
+
+enum EBoxTypes {
+	BTYPE_BoxType1,
+	BTYPE_BoxType2,
+	BTYPE_BoxType3
+};
 
 UCLASS()
 class THANKYOUFORSERVICE_API AThePackage : public AActor
@@ -35,6 +50,9 @@ public:
 	void OnCompHit(UPrimitiveComponent* MyComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, bool SelfMoved, 
 		FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit);
 
+	//This function is for turning off the physics and collsions, so that there no bugs, glitches or crashes
+	void TurningOffThePhysics();
+
 #pragma region Setters
 	UFUNCTION(BlueprintCallable)
 		void RequirementCheck();
@@ -45,14 +63,17 @@ public:
 		void SetChuteColour(FString colour);
 	UFUNCTION(BlueprintCallable)
 		void SetBoxType(FString type);
-	UFUNCTION(BlueprintCallable)
-		void SetBoxSize(FString size);
 
 	UFUNCTION(BlueprintCallable)
 		void SetSimulatePhysics(bool simulate);
 
+	//Setting different box types
 	UFUNCTION(BlueprintCallable)
-		void SetBox(ABoxTypeAndSize* b);
+		void SetBox(ABoxType1* b);
+	UFUNCTION(BlueprintCallable)
+		void SetBoxType2(ABoxType2* b);
+	UFUNCTION(BlueprintCallable)
+		void SetBoxType3(ABoxType3* b);
 
 	UFUNCTION(BlueprintCallable)
 		void SetWhileMoving(bool moving);
@@ -85,8 +106,6 @@ public:
 		FString GetChuteColour();
 	UFUNCTION(BlueprintCallable)
 		FString GetBoxType();
-	UFUNCTION(BlueprintCallable)
-		FString GetBoxSize();
 
 	//Getting Requirements Variables
 	UFUNCTION(BlueprintCallable)
@@ -95,8 +114,6 @@ public:
 		FString GetChuteColourRequirement();
 	UFUNCTION(BlueprintCallable)
 		FString GetBoxTypeRequirement();
-	UFUNCTION(BlueprintCallable)
-		FString GetBoxSizeRequirement();
 
 	//Getting Booleans
 	UFUNCTION(BlueprintCallable)
@@ -119,7 +136,11 @@ public:
 		float GetTimerInt();
 
 	UFUNCTION(BlueprintCallable)
-		ABoxTypeAndSize* GetBox();
+		ABoxType1* GetBoxType1();
+	UFUNCTION(BlueprintCallable)
+		ABoxType2* GetBoxType2();
+	UFUNCTION(BlueprintCallable)
+		ABoxType3* GetBoxType3();
 #pragma endregion
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -135,14 +156,12 @@ private:
 		FString destinationRequirement;
 		FString chuteRequirement;
 		FString boxTypeRequirement;
-		FString boxSizeRequirement;
 #pragma endregion
 
 #pragma region Input Variables
 		FString destinationCity;
 		FString chuteColour;
 		FString boxType;
-		FString boxSize;
 		bool pacakgedCorrectly;
 #pragma endregion
 
@@ -154,7 +173,9 @@ private:
 		
 #pragma region Other Components
 		ARequirementsBoard* requirementsBoard;
-		ABoxTypeAndSize* box;
+		ABoxType1* boxType1;
+		ABoxType2* boxType2;
+		ABoxType3* boxType3;
 		AStrikeSystem* strikeSystem;
 		AFinalReportSystem* finalReportSystem;
 		AQuotaBoard* quotaBoard;
@@ -164,8 +185,7 @@ private:
 		TArray<FString> destinationCities;
 		TArray<FString> chuteColours;
 		TArray<FString> boxTypes;
-		TArray<FString> boxSizes;
-		TArray<FString> objectNames;
+		EPackageTypes packageType;
 #pragma endregion
 
 #pragma region Static Meshes
