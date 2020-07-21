@@ -15,8 +15,8 @@ AQuotaBoard::AQuotaBoard()
 // Called when the game starts or when spawned
 void AQuotaBoard::BeginPlay()
 {
-	gameInstance = Cast<UStrikeSystemInstance>(GetGameInstance());
-	SetQuotaNumber();
+	
+	//SetQuotaNumber();
 
 	Super::BeginPlay();
 }
@@ -38,6 +38,8 @@ void AQuotaBoard::SetQuotaNumber()
 	//Setting the quota number with a random range
 	
 	int num1, num2;
+
+	gameInstance = Cast<UStrikeSystemInstance>(GetGameInstance());
 
 	if (gameInstance) {
 		switch (gameInstance->currentGameMode) {
@@ -77,7 +79,15 @@ void AQuotaBoard::SetQuotaNumber()
 				num1 = 20;
 				num2 = 30;
 				break;
+			case EDay::DAY_Four:
+				num1 = 30;
+				num2 = 40;
+				break;
 			}
+			break;
+		case EGameMode::GAMEMODE_Tutorial:
+			num1 = 3;
+			num2 = 5;
 			break;
 		default:
 			num1 = 20;

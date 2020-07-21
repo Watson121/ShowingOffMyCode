@@ -24,14 +24,17 @@ enum ELevel {
 UENUM(BlueprintType)
 enum EGameMode {
 	GAMEMODE_Story,
-	GAMEMODE_TimeTrial
+	GAMEMODE_TimeTrial,
+	GAMEMODE_Tutorial
 };
 
 UENUM(BlueprintType)
 enum EDay {
 	DAY_One,
 	DAY_Two,
-	DAY_Three
+	DAY_Three,
+	DAY_Four,
+	DAY_Death
 };
 
 
@@ -60,11 +63,4 @@ public:
 	int finalScore;
 	bool quotaMet;
 #pragma endregion
-
-
-
-
-
-
-
 };

@@ -2,21 +2,20 @@
 
 #pragma once
 
-#include "EngineUtils.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "RequirementsBoard.generated.h"
+#include "Chute.generated.h"
 
-class AThePackage;
+class AQuotaBoard;
 
 UCLASS()
-class THANKYOUFORSERVICE_API ARequirementsBoard : public AActor
+class THANKYOUFORSERVICE_API AChute : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ARequirementsBoard();
+	AChute();
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,23 +25,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SetDestinationCity(FString city);
-	void SetChuteColour(FString colour);
-	void SetBoxType(FString type);
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString destinationCity;
+		int chuteNumber;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString chuteColour;
+		FString chuteColour;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString typeOfBox;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	AThePackage* package;
-	
-private:
-
-	USceneComponent* sceneComponent;
-	UStaticMeshComponent* requirementsScreen;
-	UStaticMesh* requirementsScreenObj;
-
+		AQuotaBoard* quotaBoard;
 };

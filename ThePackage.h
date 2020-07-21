@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "EnumHolder.h"
+
 #include "Math/UnrealMathUtility.h"
 #include "EngineUtils.h"
 #include "Vector.h"
@@ -9,6 +11,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ThePackage.generated.h"
+
 
 class ARequirementsBoard;
 class AStrikeSystem;
@@ -18,18 +21,70 @@ class AQuotaBoard;
 class ABoxType1;
 class ABoxType2;
 class ABoxType3;
+class EnumHolder;
 
-enum EPackageTypes {
-	PACKAGE_Toy,
-	PACKAGE_Console,
-	PACKAGE_Vase
+USTRUCT(Blueprintable) /*Struct that is responsible for setting and getting the pacakge requirements*/
+struct FPackageRequirement {
+
+	GENERATED_BODY()
+
+	FPackageRequirement() : packageType(), destinationCity(), boxType(), chuteColour() {}
+
+public:
+
+#pragma region GETTERS
+	PackageParameters::EPackageTypes GetPackageType() { return packageType; }
+	PackageParameters::EDestinationCities GetDestinationCity() { return destinationCity; }
+	PackageParameters::EBoxTypes GetBoxType() { return boxType; }
+	PackageParameters::EChuteColour GetChuteColour() { return chuteColour; }
+#pragma endregion
+
+#pragma region SETTERS
+	void SetPackageType(TEnumAsByte<PackageParameters::EPackageTypes> type) { packageType = type; }
+	void SetDestiantionCity(TEnumAsByte<PackageParameters::EDestinationCities>  city) { destinationCity = city; }
+	void SetBoxType(TEnumAsByte<PackageParameters::EBoxTypes> type) { boxType = type; }
+	void SetChuteColour(TEnumAsByte<PackageParameters::EChuteColour> colour) { chuteColour = colour; }
+#pragma endregion
+
+private:
+
+	TEnumAsByte<PackageParameters::EPackageTypes> packageType;
+	TEnumAsByte<PackageParameters::EDestinationCities> destinationCity;
+	TEnumAsByte<PackageParameters::EBoxTypes> boxType;
+	TEnumAsByte<PackageParameters::EChuteColour> chuteColour;
+
 };
 
-enum EBoxTypes {
-	BTYPE_BoxType1,
-	BTYPE_BoxType2,
-	BTYPE_BoxType3
+USTRUCT() /*Struct that is responsible for setting and getting the pacakge inputs*/
+struct FPackageInputs {
+
+	GENERATED_BODY()
+
+		FPackageInputs() : destinationCity(), boxType(), chuteColour() {}
+	
+
+public:
+
+#pragma region GETTERS
+	PackageParameters::EDestinationCities GetDestinationCity() { return destinationCity; }
+	PackageParameters::EBoxTypes GetBoxType() { return boxType; }
+	PackageParameters::EChuteColour GetChuteColour() { return chuteColour; }
+#pragma endregion
+
+#pragma region SETTERS
+	void SetDestiantionCity(TEnumAsByte<PackageParameters::EDestinationCities> city) { destinationCity = city; }
+	void SetBoxType(TEnumAsByte<PackageParameters::EBoxTypes> type) { boxType = type; }
+	void SetChuteColour(TEnumAsByte<PackageParameters::EChuteColour> colour) { chuteColour = colour; }
+#pragma endregion
+
+private:
+
+	TEnumAsByte<PackageParameters::EDestinationCities> destinationCity;
+	TEnumAsByte<PackageParameters::EBoxTypes> boxType;
+	TEnumAsByte<PackageParameters::EChuteColour> chuteColour;
+
 };
+
 
 UCLASS()
 class THANKYOUFORSERVICE_API AThePackage : public AActor
@@ -44,186 +99,30 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
+
+	FPackageRequirement* packageRequirements;
+	FPackageInputs* packageParameters;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	void OnCompHit(UPrimitiveComponent* MyComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, bool SelfMoved, 
-		FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit);
 
-	//This function is for turning off the physics and collsions, so that there no bugs, glitches or crashes
-	void TurningOffThePhysics();
-
-#pragma region Setters
-	UFUNCTION(BlueprintCallable)
-		void RequirementCheck();
-
-	UFUNCTION(BlueprintCallable)
-		void SetDestinationCity(FString city);
-	UFUNCTION(BlueprintCallable)
-		void SetChuteColour(FString colour);
-	UFUNCTION(BlueprintCallable)
-		void SetBoxType(FString type);
-
-	UFUNCTION(BlueprintCallable)
-		void SetSimulatePhysics(bool simulate);
-
-	//Setting different box types
-	UFUNCTION(BlueprintCallable)
-		void SetBox(ABoxType1* b);
-	UFUNCTION(BlueprintCallable)
-		void SetBoxType2(ABoxType2* b);
-	UFUNCTION(BlueprintCallable)
-		void SetBoxType3(ABoxType3* b);
-
-	UFUNCTION(BlueprintCallable)
-		void SetWhileMoving(bool moving);
-	UFUNCTION(BlueprintCallable)
-		void SetPickedUp(bool pick);
-	UFUNCTION(BlueprintCallable)
-		void SetHighlightActive(bool active);
-
-	UFUNCTION(BlueprintCallable)
-		void SetDropPoint(FVector dPoint);
-	UFUNCTION(BlueprintCallable)
-		void SetStopPoint(FVector sPoint);
-	
-	UFUNCTION(BlueprintCallable)
-		void SetDistance(float d);
-	UFUNCTION(BlueprintCallable)
-		void SetTimerInt(float t);
-
-#pragma endregion
-
-#pragma region Getters
-
-	UFUNCTION(BlueprintCallable)
-		UStaticMeshComponent* GetPackageMesh();
-
-	//Getting Input Variables
-	UFUNCTION(BlueprintCallable)
-		FString GetDestinationCity();
-	UFUNCTION(BlueprintCallable)
-		FString GetChuteColour();
-	UFUNCTION(BlueprintCallable)
-		FString GetBoxType();
-
-	//Getting Requirements Variables
-	UFUNCTION(BlueprintCallable)
-		FString GetDestinationCityRequirement();
-	UFUNCTION(BlueprintCallable)
-		FString GetChuteColourRequirement();
-	UFUNCTION(BlueprintCallable)
-		FString GetBoxTypeRequirement();
-
-	//Getting Booleans
-	UFUNCTION(BlueprintCallable)
-		bool GetHighlightActive();
-	UFUNCTION(BlueprintCallable)
-		bool GetPickedUp();
-	UFUNCTION(BlueprintCallable)
-		bool GetWhileMoving();
-
-	//Getting FVectors
-	UFUNCTION(BlueprintCallable)
-		FVector GetDropPoint();
-	UFUNCTION(BlueprintCallable)
-		FVector GetStopPoint();
-
-	//Getting Ints and Floats
-	UFUNCTION(BlueprintCallable)
-		float GetDistance();
-	UFUNCTION(BlueprintCallable)
-		float GetTimerInt();
-
-	UFUNCTION(BlueprintCallable)
-		ABoxType1* GetBoxType1();
-	UFUNCTION(BlueprintCallable)
-		ABoxType2* GetBoxType2();
-	UFUNCTION(BlueprintCallable)
-		ABoxType3* GetBoxType3();
-#pragma endregion
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* packageMeshComponenet;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* highlightMeshComponenet;
+	bool GetPickedUp();
+	bool GetHighlightActive();
+	int GetNumberOfRequirements();
 
 private:
 
-#pragma region Declerations
+	UStaticMeshComponent* packageMeshComponent;
+	UStaticMesh* packageMesh;
+	UStaticMesh* vaseMesh;
+	UStaticMesh* consoleMesh;
+	UStaticMesh* toyMesh;
 
-#pragma region The Requirements
-		FString destinationRequirement;
-		FString chuteRequirement;
-		FString boxTypeRequirement;
-#pragma endregion
+	bool pickedUp;
+	bool highlightActive;
+	int numberOfRequirementsCorrect;
 
-#pragma region Input Variables
-		FString destinationCity;
-		FString chuteColour;
-		FString boxType;
-		bool pacakgedCorrectly;
-#pragma endregion
-
-#pragma region Damage
-		bool damaged;
-		float packageSpeed;
-		int damageAmount;
-#pragma endregion
-		
-#pragma region Other Components
-		ARequirementsBoard* requirementsBoard;
-		ABoxType1* boxType1;
-		ABoxType2* boxType2;
-		ABoxType3* boxType3;
-		AStrikeSystem* strikeSystem;
-		AFinalReportSystem* finalReportSystem;
-		AQuotaBoard* quotaBoard;
-#pragma endregion
-
-#pragma region Arrays
-		TArray<FString> destinationCities;
-		TArray<FString> chuteColours;
-		TArray<FString> boxTypes;
-		EPackageTypes packageType;
-#pragma endregion
-
-#pragma region Static Meshes
-		FString objectName;
-		UStaticMesh* packageMesh;
-		UStaticMesh* vaseMesh;
-		UStaticMesh* consoleMesh;
-		UStaticMesh* toyMesh;
-		UStaticMesh* placeholderMesh;
-		UStaticMesh* vaseHighlighMesh;
-		UStaticMesh* consoleHighlightMesh;
-		UStaticMesh* toyHighlightMesh;
-#pragma endregion
-		
-		//Calculating Damage
-		FVector dropPoint;
-		FVector stopPoint;
-		float distance;
-		float timerInt;
-
-		bool whileMoving;
-		bool pickedUp;
-		bool highlightActive;
-		int numberOfRequirementsCorrect;
-
-#pragma endregion
-
-#pragma region Functions
-		void SetRequirements();
-		void SetPackageMesh();
-		UFUNCTION(BlueprintCallable)
-		void CallRequirementsBoard();
-		void DestroyThis();
-
-		bool DamageCheck();
-		int CalculateDamage();
-#pragma endregion
-
-
-
+	void SetRequirements();
+	void CallRequirmentsBoard();
 };

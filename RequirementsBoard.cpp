@@ -10,10 +10,21 @@ ARequirementsBoard::ARequirementsBoard()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	requirementsScreen = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Requirements Screen"));
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> placeholderMeshObject(TEXT("StaticMesh'/Game/Models/RequirementBoard.RequirementBoard'"));
+
+	requirementsScreenObj = placeholderMeshObject.Object;
+
+	if (requirementsScreenObj) {
+		requirementsScreen->SetStaticMesh(requirementsScreenObj);
+	}
+
+	RootComponent = requirementsScreen;
+
 	destinationCity = "PLEASE PICK PACKAGE UP";
 	chuteColour = "PLEASE PICK PACKAGE UP";
 	typeOfBox = "PLEASE PICK PACKAGE UP";
-	sizeOfBox = 0;
 }
 
 // Called when the game starts or when spawned
@@ -49,8 +60,4 @@ void ARequirementsBoard::SetBoxType(FString type)
 	typeOfBox = type;
 }
 
-void ARequirementsBoard::SetBoxSize(FString size)
-{
-	sizeOfBox = size;
-}
 

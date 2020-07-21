@@ -29,6 +29,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
 	void SetQuotaNumber();
 	void SetNumberOfPackagesSorted();
 	void SetNumberOfPackagesSortedSuccessfully();
@@ -43,10 +44,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool GetQuotaHasBeenMet();
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int quotaNumber;
 private:
 
-	int quotaNumber;
+
 	int numberOfPackagesSorted;
 	int numberOfPackagesSortedSuccesfully;
 	bool hasQuotaBeenMet;

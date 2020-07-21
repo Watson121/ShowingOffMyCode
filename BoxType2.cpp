@@ -1,10 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "BoxType3.h"
+
+#include "BoxType2.h"
 #include "ThePackage.h"
 
 // Sets default values
-ABoxType3::ABoxType3()
+ABoxType2::ABoxType2()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -12,26 +13,26 @@ ABoxType3::ABoxType3()
 	boxMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Box"));
 	highlightMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Highlight"));
 	boxLidMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BoxLid"));
-	itemCheck = CreateDefaultSubobject<UCapsuleComponent>(TEXT("ItemCheck"));
+	itemCheck = CreateDefaultSubobject<UBoxComponent>(TEXT("ItemCheck"));
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> boxType3Object(TEXT("StaticMesh'/Game/Models/BoxType3.BoxType3'"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> boxType3HighlightObject(TEXT("StaticMesh'/Game/Models/BoxType3Highlight.BoxType3Highlight'"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> boxLidObject(TEXT("StaticMesh'/Game/Models/BoxType3Lid.BoxType3Lid'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> boxType2Object(TEXT("StaticMesh'/Game/Models/BoxType2.BoxType2'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> boxType2HighlightObject(TEXT("StaticMesh'/Game/Models/BoxType2Higlight.BoxType2Higlight'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> boxLidObject(TEXT("StaticMesh'/Game/Models/BoxType1Lid.BoxType1Lid'"));
 
-	boxType3 = boxType3Object.Object;
-	boxType3Highlight = boxType3HighlightObject.Object;
-	boxType3Lid = boxLidObject.Object;
+	boxType2 = boxType2Object.Object;
+	boxType2Highlight = boxType2HighlightObject.Object;
+	boxType2Lid = boxLidObject.Object;
 
-	if (boxType3) {
-		boxMeshComponent->SetStaticMesh(boxType3);
+	if (boxType2) {
+		boxMeshComponent->SetStaticMesh(boxType2);
 	}
 
-	if (boxType3Highlight) {
-		highlightMeshComponent->SetStaticMesh(boxType3Highlight);
+	if (boxType2Highlight) {
+		highlightMeshComponent->SetStaticMesh(boxType2Highlight);
 	}
 
-	if (boxType3Lid) {
-		boxLidMeshComponent->SetStaticMesh(boxType3Lid);
+	if (boxType2Lid) {
+		boxLidMeshComponent->SetStaticMesh(boxType2Lid);
 	}
 
 	pickedUp = false;
@@ -42,35 +43,32 @@ ABoxType3::ABoxType3()
 
 	FVector location = GetTransform().TransformPosition(boxMeshComponent->GetComponentLocation());
 
-	boxMeshComponent->SetWorldScale3D(FVector(2.0f, 2.0f, 2.0f));
-
 	highlightMeshComponent->SetWorldLocation(FVector(location.X, location.Y, location.Z));
 	highlightMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	highlightMeshComponent->SetVisibility(false);
 
-	boxLidMeshComponent->SetWorldLocation(FVector(location.X, location.Y, location.Z + 18.0f));
-	boxLidMeshComponent->SetWorldRotation(FRotator(0.0f, 90.0f, 0.0f));
+	boxLidMeshComponent->SetWorldLocation(FVector(location.X, location.Y, location.Z + 8.2f));
+	boxLidMeshComponent->SetWorldRotation(FRotator(0.0f, -180.0f, 0.0f));
 	boxLidMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	boxLidMeshComponent->SetVisibility(false);
-	
-	itemCheck->SetCapsuleHalfHeight(10.0f);
-	itemCheck->SetCapsuleRadius(20.0f);
-	itemCheck->SetWorldScale3D(FVector(0.4f, 0.4f, 0.4f));
-	itemCheck->SetWorldLocation(FVector(location.X, location.Y, location.Z + 10.25f));
+
+	itemCheck->SetBoxExtent(FVector(14.0f, 14.0f, 5.0f));
+	itemCheck->SetWorldLocation(FVector(location.X, location.Y, location.Z + 0.3f));
 	itemCheck->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
-	boxType = "Type 3";
+	boxType = "Type 2";
 }
 
 // Called when the game starts or when spawned
-void ABoxType3::BeginPlay()
+void ABoxType2::BeginPlay()
 {
 	CreateBox();
 	Super::BeginPlay();
+	
 }
 
 // Called every frame
-void ABoxType3::Tick(float DeltaTime)
+void ABoxType2::Tick(float DeltaTime)
 {
 	highlightMeshComponent->SetVisibility(highlightActive);			//This activates if the highlight is active or not, depending if the player hand is near or not.
 
@@ -92,18 +90,19 @@ void ABoxType3::Tick(float DeltaTime)
 		break;
 	}
 
-	itemCheck->OnComponentEndOverlap.AddDynamic(this, &ABoxType3::OnOverlapEnd);
+	itemCheck->OnComponentEndOverlap.AddDynamic(this, &ABoxType2::OnOverlapEnd);
+
 
 	Super::Tick(DeltaTime);
 
 }
 
-void ABoxType3::DestroyBox()
+void ABoxType2::DestroyBox()
 {
 	Destroy(this);
 }
 
-void ABoxType3::CreateBox()
+void ABoxType2::CreateBox()
 {
 #pragma region Box Mesh and Box Lid Mesh
 	//Setting the physics controls
@@ -155,7 +154,7 @@ void ABoxType3::CreateBox()
 }
 
 
-void ABoxType3::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void ABoxType2::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
@@ -168,66 +167,66 @@ void ABoxType3::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 	}
 }
 
-void ABoxType3::AttachThePackage()
+void ABoxType2::AttachThePackage()
 {
 	if (GetBoxFull() == true) {
-		//GetThePackage()->AttachToComponent(boxMeshComponent, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false));
+		GetThePackage()->AttachToComponent(boxMeshComponent, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, false));
 		//GetThePackage()->TurningOffThePhysics();
-		//GetThePackage()->SetBoxType3(this);
+		//GetThePackage()->SetBoxType2(this);
 		//GetThePackage()->SetBoxType(GetBoxType());
+		//GetThePackage()->SetPickedUp(false);
 
 		boxLidMeshComponent->SetVisibility(true);
 		boxLidMeshComponent->SetSimulatePhysics(true);
 		boxLidMeshComponent->BodyInstance.SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		//itemCheck->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }
 
 
 #pragma region Setters
-void ABoxType3::SetBoxType(FString type)
+void ABoxType2::SetBoxType(FString type)
 {
 	boxType = type;
 }
-void ABoxType3::SetPickedUp(bool pick)
+void ABoxType2::SetPickedUp(bool pick)
 {
 	pickedUp = pick;
 }
-void ABoxType3::SetBoxFull(bool full)
+void ABoxType2::SetBoxFull(bool full)
 {
 	boxFull = full;
 }
-void ABoxType3::SetHighlightActive(bool active)
+void ABoxType2::SetHighlightActive(bool active)
 {
 	highlightActive = active;
 }
-void ABoxType3::SetPackageObject(AThePackage * p)
+void ABoxType2::SetPackageObject(AThePackage * p)
 {
 	package = p;
 }
 #pragma endregion
 
 #pragma region Getters
-FString ABoxType3::GetBoxType()
+FString ABoxType2::GetBoxType()
 {
 	return boxType;
 }
 
-bool ABoxType3::GetPickedUp()
+bool ABoxType2::GetPickedUp()
 {
 	return pickedUp;
 }
 
-bool ABoxType3::GetBoxFull()
+bool ABoxType2::GetBoxFull()
 {
 	return boxFull;
 }
 
-bool ABoxType3::GetHighlightActive()
+bool ABoxType2::GetHighlightActive()
 {
 	return highlightActive;
 }
-AThePackage * ABoxType3::GetThePackage()
+AThePackage * ABoxType2::GetThePackage()
 {
 	return package;
 }

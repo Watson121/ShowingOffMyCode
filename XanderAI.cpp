@@ -1,0 +1,34 @@
+// Copyright of Adam Tedder 2020
+
+
+#include "XanderAI.h"
+
+// Sets default values
+AXanderAI::AXanderAI()
+{
+ 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+}
+
+// Called when the game starts or when spawned
+void AXanderAI::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
+
+// Called every frame
+void AXanderAI::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+// Called to bind functionality to input
+void AXanderAI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+}
+
